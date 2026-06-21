@@ -1,5 +1,5 @@
 {
-  "version": "v0.2",
+  "version": "v0.2.0",
   "patches": [
     {
       "name": "Force notification grouping",
