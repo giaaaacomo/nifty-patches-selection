@@ -66,11 +66,19 @@ val forceNotificationGroupingPatch = bytecodePatch(
         description = "Print notification grouping decisions to logcat.",
     )
 
+    val strictAllGrouping = booleanOption(
+        key = "strictAllGrouping",
+        default = true,
+        title = "Strict all-notifications grouping",
+        description = "When grouping all notifications together, remove sort keys and conversation hints that can make Android or One UI split Instagram notifications anyway.",
+    )
+
     dependsOn(sharedExtensionPatch)
 
     execute {
-        GroupingModeFingerprint.method.returnEarly(groupingMode.value!!)
-        DebugLoggingFingerprint.method.returnEarly(debugLogging.value!!)
+        BuildDefaultGroupingModeFingerprint.method.returnEarly(groupingMode.value!!)
+        BuildDefaultStrictAllGroupingFingerprint.method.returnEarly(strictAllGrouping.value!!)
+        BuildDefaultDebugLoggingFingerprint.method.returnEarly(debugLogging.value!!)
         with(this) {
             instagramInitHook.invoke(EXTENSION_CLASS)
         }

@@ -2,12 +2,12 @@ group = "app.morphe"
 
 patches {
     about {
-        name = "giaaaacomo's nifty patches selection"
-        description = "Personal Morphe patch selection by giaaaacomo"
+        name = "Nifty Morphe Patches"
+        description = "Slim Morphe patch bundle with Instagram notification grouping"
         source = "https://github.com/giaaaacomo/nifty-morphe-patches-selection"
         author = "giaaaacomo"
         contact = "na"
-        website = "https://github.com/giaaaacomo"
+        website = "https://github.com/giaaaacomo/nifty-morphe-patches-selection"
         license = "GNU General Public License v3.0, with additional GPL section 7 requirements"
     }
 }

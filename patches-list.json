@@ -1,5 +1,5 @@
 {
-  "version": "v0.2.4",
+  "version": "v0.2.5",
   "patches": [
     {
       "name": "Force notification grouping",
@@ -46,6 +46,15 @@
           "required": false,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "strictAllGrouping",
+          "title": "Strict all-notifications grouping",
+          "description": "When grouping all notifications together, remove sort keys and conversation hints that can make Android or One UI split Instagram notifications anyway.",
+          "required": false,
+          "type": "kotlin.Boolean",
+          "default": true,
           "values": null
         }
       ]
