@@ -168,6 +168,104 @@ private val enablePhoneComponentsPatch = resourcePatch(
             "res/values-sw400dp-land/dimens.xml",
             "res/values-sw600dp-land/dimens.xml",
         )
+
+        // The original four-column tablet row makes the onboarding labels unreadable on phones.
+        document("res/layout/oobe_content_select_layout.xml").use { document ->
+            val cards = document.getElementsByTagName("RelativeLayout")
+            val expectedIds = listOf(
+                "daily_info_item_layout",
+                "memo_item_layout",
+                "smart_things_item_layout",
+                "slide_show_layout",
+            )
+            if (cards.length != expectedIds.size || expectedIds.indices.any { index ->
+                    (cards.item(index) as Element).getAttribute("android:id")
+                        .substringAfterLast('/') != expectedIds[index]
+                }
+            ) throw PatchException("Daily Board onboarding content cards changed.")
+
+            val items = expectedIds.indices.map { cards.item(it) as Element }
+            val references = items.map {
+                it.getAttribute("android:id").replace("@+id/", "@id/")
+            }
+            items.forEach { item ->
+                listOf(
+                    "app:layout_constraintStart_toStartOf",
+                    "app:layout_constraintStart_toEndOf",
+                    "app:layout_constraintEnd_toStartOf",
+                    "app:layout_constraintEnd_toEndOf",
+                    "app:layout_constraintTop_toTopOf",
+                    "app:layout_constraintTop_toBottomOf",
+                    "app:layout_constraintHorizontal_chainStyle",
+                ).forEach(item::removeAttribute)
+                item.setAttribute("android:layout_height", "wrap_content")
+            }
+            items[0].apply {
+                setAttribute("app:layout_constraintStart_toStartOf", "parent")
+                setAttribute("app:layout_constraintEnd_toStartOf", references[1])
+                setAttribute("app:layout_constraintTop_toTopOf", "parent")
+            }
+            items[1].apply {
+                setAttribute("app:layout_constraintStart_toEndOf", references[0])
+                setAttribute("app:layout_constraintEnd_toEndOf", "parent")
+                setAttribute("app:layout_constraintTop_toTopOf", "parent")
+            }
+            items[2].apply {
+                removeAttribute("android:layout_marginStart")
+                setAttribute("android:layout_marginTop", "12dp")
+                setAttribute("app:layout_constraintStart_toStartOf", "parent")
+                setAttribute("app:layout_constraintEnd_toStartOf", references[3])
+                setAttribute("app:layout_constraintTop_toBottomOf", references[0])
+            }
+            items[3].apply {
+                setAttribute("android:layout_marginTop", "12dp")
+                setAttribute("app:layout_constraintStart_toEndOf", references[2])
+                setAttribute("app:layout_constraintEnd_toEndOf", "parent")
+                setAttribute("app:layout_constraintTop_toBottomOf", references[0])
+            }
+            val images = document.getElementsByTagName("ImageView")
+            if (images.length != expectedIds.size) {
+                throw PatchException("Daily Board onboarding content images changed.")
+            }
+            for (index in 0 until images.length) {
+                (images.item(index) as Element).apply {
+                    setAttribute("android:layout_width", "72dp")
+                    setAttribute("android:layout_height", "72dp")
+                    setAttribute("android:layout_centerHorizontal", "true")
+                }
+            }
+        }
+
+        fun replacePogoLabels(path: String, title: String, condition: String) {
+            val replacements = mapOf(
+                "auto_start_with_pogo" to title,
+                "when_auto_start_with_pogo" to condition,
+            )
+            val missing = replacements.keys.toMutableSet()
+            document(path).use { document ->
+                val strings = document.getElementsByTagName("string")
+                for (index in 0 until strings.length) {
+                    val entry = strings.item(index) as? Element ?: continue
+                    val name = entry.getAttribute("name")
+                    val replacement = replacements[name] ?: continue
+                    entry.textContent = replacement
+                    missing.remove(name)
+                }
+            }
+            if (missing.isNotEmpty()) {
+                throw PatchException("Daily Board POGO strings were not found in $path: $missing")
+            }
+        }
+        replacePogoLabels(
+            "res/values/strings.xml",
+            "Wireless or landscape USB charging",
+            "With wireless or landscape USB charging",
+        )
+        replacePogoLabels(
+            "res/values-it/strings.xml",
+            "Wireless o USB in landscape",
+            "Con ricarica wireless o USB in landscape",
+        )
     }
 }
 
