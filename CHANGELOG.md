@@ -1,3 +1,9 @@
+## [0.3.2-dev.1](https://github.com/giaaaacomo/nifty-patches-selection/compare/v0.3.1...v0.3.2-dev.1) (2026-10-07)
+
+### 🐛 Bug Fixes
+
+* **samsung:** use an explicit onboarding settings intent ([9fb226f](https://github.com/giaaaacomo/nifty-patches-selection/commit/9fb226f39f9789a4ee4ed7723dc688ec4d367edb))
+
 ## [0.3.1](https://github.com/giaaaacomo/nifty-patches-selection/compare/v0.3.0...v0.3.1) (2026-10-05)
 
 ### 🐛 Bug Fixes

@@ -46,6 +46,26 @@ private val enablePhoneComponentsPatch = resourcePatch(
     description = "Enables Daily Board components that Samsung disables on unsupported devices."
 ) {
     execute {
+        // Android 14 rejects implicit intents to non-exported activities.
+        // Match the explicit destination already used by settings_preference.xml.
+        document("res/xml/oobe_get_started.xml").use { document ->
+            val intents = document.getElementsByTagName("intent")
+            var autoStartFound = false
+            for (index in 0 until intents.length) {
+                val intent = intents.item(index) as? Element ?: continue
+                if (intent.getAttribute("android:action") !=
+                    "com.samsung.android.homemode.settings.AUTO_START"
+                ) continue
+                intent.setAttribute("android:targetPackage", "com.samsung.android.homemode")
+                intent.setAttribute(
+                    "android:targetClass",
+                    "com.samsung.android.homemode.ui.activity.setting.AutoStartActivity"
+                )
+                autoStartFound = true
+            }
+            if (!autoStartFound) throw PatchException("Daily Board onboarding auto-start intent was not found.")
+        }
+
         document("AndroidManifest.xml").use { document ->
             var tabletFeatureFound = false
             var maxAspectMetadataFound = false
