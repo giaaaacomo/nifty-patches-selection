@@ -224,22 +224,33 @@ private val enablePhoneComponentsPatch = resourcePatch(
                 setAttribute("app:layout_constraintTop_toBottomOf", references[0])
             }
             val images = document.getElementsByTagName("ImageView")
-            if (images.length != expectedIds.size) {
-                throw PatchException("Daily Board onboarding content images changed.")
+            val labels = document.getElementsByTagName("TextView")
+            val checkboxes = document.getElementsByTagName("CheckBox")
+            if (listOf(images, labels, checkboxes).any { it.length != expectedIds.size }) {
+                throw PatchException("Daily Board onboarding content views changed.")
             }
             for (index in 0 until images.length) {
                 (images.item(index) as Element).apply {
                     setAttribute("android:layout_width", "72dp")
                     setAttribute("android:layout_height", "72dp")
                     setAttribute("android:layout_centerHorizontal", "true")
+                    setAttribute("android:layout_marginTop", "12dp")
+                }
+                (labels.item(index) as Element).apply {
+                    setAttribute("android:layout_marginTop", "8dp")
+                    setAttribute("android:minLines", "2")
+                }
+                (checkboxes.item(index) as Element).apply {
+                    setAttribute("android:layout_marginBottom", "12dp")
                 }
             }
         }
 
-        fun replacePogoLabels(path: String, title: String, condition: String) {
+        fun replacePogoLabels(path: String, title: String, condition: String, description: String) {
             val replacements = mapOf(
                 "auto_start_with_pogo" to title,
                 "when_auto_start_with_pogo" to condition,
+                "auto_start_description" to description,
             )
             val missing = replacements.keys.toMutableSet()
             document(path).use { document ->
@@ -260,11 +271,13 @@ private val enablePhoneComponentsPatch = resourcePatch(
             "res/values/strings.xml",
             "Wireless or landscape USB charging",
             "With wireless or landscape USB charging",
+            "Daily Board starts during wireless charging or wired charging in landscape.",
         )
         replacePogoLabels(
             "res/values-it/strings.xml",
             "Wireless o USB in landscape",
             "Con ricarica wireless o USB in landscape",
+            "Bacheca giornaliera si avvia con la ricarica wireless o USB in landscape.",
         )
     }
 }
