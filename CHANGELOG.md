@@ -1,3 +1,9 @@
+## [0.3.3-dev.1](https://github.com/giaaaacomo/nifty-patches-selection/compare/v0.3.2...v0.3.3-dev.1) (2026-10-07)
+
+### 🐛 Bug Fixes
+
+* **samsung:** fit Daily Board onboarding on phones ([#23](https://github.com/giaaaacomo/nifty-patches-selection/issues/23)) ([098ba0c](https://github.com/giaaaacomo/nifty-patches-selection/commit/098ba0cf6672199df573f964866d651b0dbd6b22))
+
 ## [0.3.2](https://github.com/giaaaacomo/nifty-patches-selection/compare/v0.3.1...v0.3.2) (2026-10-07)
 
 ### 🐛 Bug Fixes
